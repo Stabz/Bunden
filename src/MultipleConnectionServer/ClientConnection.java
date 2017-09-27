@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ClientConnection implements Runnable {
+    // CL er vores chat log, hvor vi gemmer chat strenge
     private final static ArrayList<String> CL = new ArrayList<>();
     private final Socket s;
+    //default client name
     private String name = "Guest ";
 
     public ClientConnection(Socket s) throws SocketException, IOException {
@@ -45,7 +47,7 @@ public class ClientConnection implements Runnable {
                     
                     
                     
-                    
+                    //serveren forventer 5 start på strenge fra klienten ("luk ned","NAME:","PUT:","COUNT","GET:"). der er også en default som giver error
                     if (stream.equals("luk ned")) {
                         done = true;
                     } else {
@@ -67,16 +69,20 @@ public class ClientConnection implements Runnable {
                         switch (vælger){
                             
                             case 1: 
+                                //erstater guest med navnet på klienten
                                 this.name = stream.replace("NAME:", "");
                                 this.name += " ";
                                 break;
                             
                             case 2:
+                                //tilføjer strengen til CL, vha. PUT
                                 CL.add(this.name+stream.replace("PUT", ""));
                                 out.println(this.name+stream.replace("PUT", ""));
                                 break;
                                 
                             case 3:
+                                
+                                //sender størelsen på arrayet ud til klienten får en counter igen sammenligner differencen
                                 out.println(CL.size());
                                 
                                 int clientCounter =Integer.parseInt(in.nextLine());
@@ -88,6 +94,7 @@ public class ClientConnection implements Runnable {
                                 break;
                             
                             case 4:
+                                //får med det ønskede nr fra klienten
                                 stream.replace("GET:", "");
                                 out.println(CL.get(stream.charAt(0)));
                                 break;
@@ -101,6 +108,7 @@ public class ClientConnection implements Runnable {
                     }
                 }
             } finally {
+                //lukker forbindelsen
                 s.close();
             }
         } catch (IOException | NumberFormatException e) {

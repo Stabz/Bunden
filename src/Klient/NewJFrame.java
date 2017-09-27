@@ -14,8 +14,6 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
-
-
 public class NewJFrame extends javax.swing.JFrame {
 
     private int counter = 0;
@@ -25,21 +23,15 @@ public class NewJFrame extends javax.swing.JFrame {
     private InputStream input;
     private PrintWriter out;
     private TimerTask timerTask;
-    Timer timer = new Timer("timer");
-  
-    
-    
+    private final Timer timer = new Timer("timer");
+
     public NewJFrame() {
-        
+
         initComponents();
         startConnection();
         runTimer();
     }
 
-   
-    
-    
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -133,27 +125,27 @@ public class NewJFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
+//sender teksten fra tekst field til server
+        
         out.println("PUT:" + jTextField1.getText());
         jTextArea1.append("\n" + in.nextLine());
 
         jTextField1.setText("");
-        
-        counter ++; 
-        
+
+        counter++;
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
-       
-     
-        
-        jTextArea1.append("\nchat log contains "+counter+" strings");
+//bruger counter til at fortælle hvor mange strenge der er i vores CL
+        jTextArea1.append("\nchat log contains " + counter + " strings");
 
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    //lukker forbindelsen til serveren
+        
         try {
 
             s.close();
@@ -167,7 +159,6 @@ public class NewJFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-   
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -211,6 +202,9 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 
+    
+    
+    //starter forbindelsen til server.
     private void startConnection() {
         try {
             this.s = new Socket("127.0.0.1", 8001);
@@ -218,8 +212,6 @@ public class NewJFrame extends javax.swing.JFrame {
             this.input = s.getInputStream();
             this.output = s.getOutputStream();
             this.out = new PrintWriter(output, true);
-
-            
 
             this.in = new Scanner(input);
 
@@ -233,41 +225,38 @@ public class NewJFrame extends javax.swing.JFrame {
         }
     }
 
+    //kører timer på funktionen som læser fra CL
     private void runTimer() {
-        
-        
+
         this.timerTask = new TimerTask() {
             @Override
             public void run() {
+         
+                //tæller strænge fra serveren og sammenligner med dem man selv har skrevet. 
                 out.println("COUNT");
 
-        int nytal = Integer.parseInt(in.nextLine());
-        
-        
-        out.println(counter);
-        
-        if(nytal==counter){
-        }else{
-             for (int i = counter; i < nytal; i++) {
-            jTextArea1.append("\n"+in.nextLine());
-            
-        }
-        }
-       
-        counter = nytal;
-            
+                int nytal = Integer.parseInt(in.nextLine());
+
+                out.println(counter);
+
+                if (nytal == counter) {
+                } else {
+                    for (int i = counter; i < nytal; i++) {
+                        jTextArea1.append("\n" + in.nextLine());
+
+                    }
+                }
+
+                counter = nytal;
+
             }
-       
-        
+
         };
-        
-        
-        
+
         long delay = 1000L;
         long period = 1000L;
-        
+
         timer.schedule(timerTask, delay, period);
 
-        
     }
 }
